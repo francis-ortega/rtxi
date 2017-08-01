@@ -1,6 +1,6 @@
 #
 # The Real-Time eXperiment Interface (RTXI)
-# 
+#
 # Copyright (C) 2011 Georgia Institute of Technology, University of Utah, Weill
 # Cornell Medical College
 #
@@ -67,10 +67,23 @@ AC_ARG_ENABLE(posix,
     *) AC_MSG_ERROR(bad value ${enableval} for --enable-posix);;
   esac],
   [])
+AC_ARG_ENABLE(rtai,
+  [  --enable-rtai          build the RTAI interface],
+  [case "${enableval}" in
+    "" | y | ye | yes) rtos=rtai;;
+    n | no);;
+    *) AC_MSG_ERROR(bad value ${enableval} for --enable-rtai);;
+  esac],
+  [])
 
 AM_CONDITIONAL([XENOMAI],[test x$rtos = xxenomai])
 AM_CONDITIONAL([POSIX],[test x$rtos = xposix])
-if test x$rtos = xxenomai; then
+AM_CONDITIONAL([RTAI],[test x$rtos = xrtai])
+if test x$rtos = xrtai; then
+  AC_CHECK_RTAI
+  RTOS_CPPFLAGS=$RTAI_CPPFLAGS
+  RTOS_LDFLAGS=$RTAI_LDFLAGS
+elif test x$rtos = xxenomai; then
   if test -x /usr/xenomai/bin/xeno-config; then
     XENO_CONFIG='/usr/xenomai/bin/xeno-config'
   elif test -x /usr/bin/xeno-config; then
@@ -106,13 +119,29 @@ AC_ARG_ENABLE(analogy,
     n | no) analogy=false;;
     *) AC_MSG_ERROR(bad value ${enableval} for --enable-analogy);;
   esac],
-  [analogy=true])  
+  [analogy=true])
+
+AC_ARG_ENABLE(ni,
+  [  --enable-ni             build the custom ni driver],
+  [case "${enableval}" in
+    "" | y | ye | yes) ni=true;;
+    n | no) ni=false;;
+    *) AC_MSG_ERROR(bad value ${enableval} for --enable-ni);;
+  esac],
+  [ni=false])
 
 if test x$rtos = xposix; then
   AM_CONDITIONAL(BUILD_ANALOGY, false)
+  AM_CONDITIONAL(BUILD_NI, false)
 elif test x$rtos = xxenomai; then
   AM_CONDITIONAL(BUILD_ANALOGY, test x$analogy = xtrue)
+  AM_CONDITIONAL(BUILD_NI, false)
+elif test x$rtos = xrtai; then
+  AM_CONDITIONAL(BUILD_ANALOGY, false)
+  AM_CONDITIONAL(BUILD_NI, test x$ni = xtrue)
 fi
+
+AM_CONDITIONAL(BUILD_NI, test x$ni = xtrue)
 
 dnl Clear build variables
 
@@ -144,6 +173,7 @@ plugins/connector/Makefile
 plugins/data_recorder/Makefile
 plugins/model_loader/Makefile
 plugins/oscilloscope/Makefile
+plugins/ni_device/Makefile
 plugins/performance_measurement/Makefile
 plugins/system_control/Makefile
 plugins/userprefs/Makefile

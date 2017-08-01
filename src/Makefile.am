@@ -1,5 +1,5 @@
 CLEANFILES = *~ stamp-h?
-DISTCLEANFILES = 
+DISTCLEANFILES =
 MAINTAINERCLEANFILES = Makefile.in
 
 include $(top_srcdir)/Makefile.buildvars
@@ -24,7 +24,7 @@ pkginclude_HEADERS = \
 		rt.h \
 		sem.h \
 		settings.h \
-		workspace.h 
+		workspace.h
 
 rtxi_SOURCES = \
 		atomic_fifo.cpp \
@@ -47,15 +47,20 @@ nodist_rtxi_SOURCES = \
 		config.h \
 		moc_default_gui_model.cpp \
 		moc_main_window.cpp \
-		moc_plugin.cpp 
+		moc_plugin.cpp
 
 EXTRA_DIST = \
 		rt_os-posix.cpp \
-		rt_os-xenomai.cpp
+		rt_os-xenomai.cpp \
+		rt_os-rtai.cpp
 
 if XENOMAI
 rtxi_SOURCES += \
 		rt_os-xenomai.cpp
+endif
+if RTAI
+rtxi_SOURCES += \
+		rt_os-rtai.cpp
 endif
 if POSIX
 rtxi_SOURCES += \

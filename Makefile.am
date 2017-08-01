@@ -1,6 +1,6 @@
 #
 # The Real-Time eXperiment Interface (RTXI)
-# 
+#
 # Copyright (C) 2011 Georgia Institute of Technology, University of Utah, Weill
 # Cornell Medical College
 #
@@ -23,11 +23,11 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS      = libs src plugins scripts res
 
-ACLOCAL_DIST = 
+ACLOCAL_DIST =
 
 EXTRA_DIST   = autogen.sh $(ACLOCAL_DIST)
 
-CLEANFILES            = *~ src/moc_*.cpp 
+CLEANFILES            = *~ src/moc_*.cpp
 DISTCLEANFILES        = rtxi.conf Makefile.modcompile config.log about.h rtos
 MAINTAINERCLEANFILES  = aclocal.m4 configure config.guess config.sub Makefile.in
 MAINTAINERCLEANDIRS   = autom4te.cache
@@ -38,7 +38,7 @@ pkgdata_SCRIPTS = libtool
 
 include $(top_srcdir)/Makefile.buildvars
 
-rtxi.conf: 
+rtxi.conf:
 	@echo "Generating rtxi.conf..."
 	@echo '<RTXI class="settings" version="2.0" >' > $@
 	@echo ' <OBJECT component="rt" id="0" >' >> $@
@@ -53,6 +53,13 @@ if BUILD_ANALOGY
 	@echo '  <PARAM name="Num Devices" >1</PARAM>' >> $@
 	@echo '  <OBJECT id="13" name="0" />' >> $@
 	@echo ' </OBJECT>' >> $@
+endif
+if BUILD_NI
+	@echo ' <OBJECT component="plugin" library="ni_driver.so" id="2" >'		>> $@
+	@echo '  <PARAM name="0" >PCI::SCAN</PARAM>'					>> $@
+	@echo '  <PARAM name="Num Devices" >1</PARAM>'					>> $@
+	@echo '  <OBJECT id="14" name="0" />'						>> $@
+	@echo ' </OBJECT>'								>> $@
 endif
 	@echo ' <OBJECT component="plugin" library="model_loader.so" id="3" />'>> $@
 	@echo ' <OBJECT component="plugin" library="module_installer.so" id="4" />'>> $@
