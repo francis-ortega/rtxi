@@ -571,9 +571,9 @@ void NIDevice::write(void) {
     offset = getChannelCount(AO);
     for(size_t i=0;count < getChannelCount(DIO);++i)
       if(subdevice[DIO].chan[i].digital.active) {
-        ++count;
         if(input(i+offset) > 2.0)
           data |= 1<<i;
+        if(++count >= subdevice[DIO].active) break;
       }
     board->Static_Digital_Output.writeRegister(data);
   }
